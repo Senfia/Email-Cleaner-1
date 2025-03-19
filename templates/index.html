@@ -5,205 +5,254 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Email Cleaner</title>
     <style>
-        /* General Styles */
         body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f9f9f9;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            flex-direction: column;
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
         }
-
+        .container {
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
         h1 {
             color: #333;
+        }
+        .upload-section {
             margin-bottom: 20px;
-            font-size: 2.5rem;
-        }
-
-        /* Form Styles */
-        #upload-form {
-            background: #fff;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            width: 100%;
-            max-width: 400px;
-        }
-
-        #file-input {
-            display: none;
-        }
-
-        .file-upload-label {
-            display: inline-block;
-            background: #4caf50;
-            color: #fff;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background 0.3s ease;
-        }
-
-        .file-upload-label:hover {
-            background: #45a049;
-        }
-
-        button[type="submit"] {
-            background: #007bff;
-            color: #fff;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-top: 15px;
-            transition: background 0.3s ease;
-        }
-
-        button[type="submit"]:hover {
-            background: #0056b3;
-        }
-
-        /* Progress Container Styles */
-        #progress-container {
-            display: none;
-            background: #fff;
             padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            margin-top: 20px;
-            width: 100%;
-            max-width: 400px;
-            text-align: center;
-        }
-
-        #progress-bar {
-            width: 100%;
-            background-color: #f3f3f3;
-            border: 1px solid #ccc;
+            border: 1px solid #ddd;
             border-radius: 5px;
-            overflow: hidden;
-            margin: 15px 0;
         }
-
-        #progress-bar-fill {
+        .progress-container {
+            margin-top: 20px;
+            display: none;
+        }
+        .progress-bar {
             height: 20px;
-            background-color: #4caf50;
+            background-color: #f0f0f0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            background-color: #4CAF50;
             width: 0%;
             transition: width 0.3s ease;
         }
-
-        #progress-text {
-            font-size: 0.9rem;
-            color: #555;
-            margin: 10px 0;
-        }
-
-        #current-email {
-            font-size: 0.9rem;
-            color: #777;
+        .current-email {
             font-style: italic;
+            margin-bottom: 10px;
         }
-
-        /* Responsive Design */
-        @media (max-width: 480px) {
-            h1 {
-                font-size: 2rem;
-            }
-
-            #upload-form {
-                padding: 20px;
-            }
-
-            .file-upload-label, button[type="submit"] {
-                padding: 8px 16px;
-                font-size: 0.9rem;
-            }
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .stat-box {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            margin-right: 10px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .stat-box:last-child {
+            margin-right: 0;
+        }
+        .download-section {
+            margin-top: 20px;
+            display: none;
+        }
+        .download-btn {
+            display: inline-block;
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+        .error-message {
+            color: red;
+            margin-top: 10px;
+            display: none;
         }
     </style>
 </head>
 <body>
-    <h1>Email Cleaner</h1>
-    <form id="upload-form" enctype="multipart/form-data">
-        <label for="file-input" class="file-upload-label">Choose CSV File</label>
-        <input type="file" name="file" id="file-input" accept=".csv">
-        <button type="submit">Upload</button>
-    </form>
-
-    <div id="progress-container">
-        <h2>Processing...</h2>
-        <div id="progress-bar">
-            <div id="progress-bar-fill"></div>
+    <div class="container">
+        <h1>Email Cleaner</h1>
+        <p>Upload a CSV file containing First Name, Last Name, and Email to validate and clean the email list.</p>
+        
+        <div class="upload-section">
+            <form id="upload-form" enctype="multipart/form-data">
+                <input type="file" id="file" name="file" accept=".csv">
+                <button type="submit">Upload and Process</button>
+                <div class="error-message" id="error-message"></div>
+            </form>
         </div>
-        <p id="progress-text"></p>
-        <p id="current-email"></p>
+        
+        <div class="progress-container" id="progress-container">
+            <h2>Processing Progress</h2>
+            <div class="progress-bar">
+                <div class="progress-bar-fill" id="progress-bar-fill"></div>
+            </div>
+            <div class="current-email" id="current-email">Processing: </div>
+            
+            <div class="stats">
+                <div class="stat-box">
+                    <h3>Total</h3>
+                    <div id="total-count">0</div>
+                </div>
+                <div class="stat-box">
+                    <h3>Processed</h3>
+                    <div id="processed-count">0</div>
+                </div>
+                <div class="stat-box">
+                    <h3>Valid</h3>
+                    <div id="valid-count">0</div>
+                </div>
+                <div class="stat-box">
+                    <h3>Invalid</h3>
+                    <div id="invalid-count">0</div>
+                </div>
+            </div>
+            
+            <div id="status">Status: Waiting to start</div>
+        </div>
+        
+        <div class="download-section" id="download-section">
+            <h2>Download Results</h2>
+            <a href="/download/valid" class="download-btn" id="download-valid">Download Valid Emails</a>
+            <a href="/download/invalid" class="download-btn" id="download-invalid">Download Invalid Emails</a>
+        </div>
     </div>
-
+    
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const uploadForm = document.getElementById('upload-form');
             const progressContainer = document.getElementById('progress-container');
             const progressBarFill = document.getElementById('progress-bar-fill');
-            const progressText = document.getElementById('progress-text');
             const currentEmail = document.getElementById('current-email');
-
+            const totalCount = document.getElementById('total-count');
+            const processedCount = document.getElementById('processed-count');
+            const validCount = document.getElementById('valid-count');
+            const invalidCount = document.getElementById('invalid-count');
+            const statusElement = document.getElementById('status');
+            const downloadSection = document.getElementById('download-section');
+            const errorMessage = document.getElementById('error-message');
+            
+            let progressInterval;
+            
             uploadForm.addEventListener('submit', function(event) {
                 event.preventDefault();
-                const fileInput = document.getElementById('file-input');
+                
+                const fileInput = document.getElementById('file');
                 const file = fileInput.files[0];
-
+                
                 if (!file) {
-                    alert('Please select a file.');
+                    showError('Please select a file');
                     return;
                 }
-
+                
+                if (!file.name.endsWith('.csv')) {
+                    showError('Only CSV files are allowed');
+                    return;
+                }
+                
                 const formData = new FormData();
                 formData.append('file', file);
-
+                
+                // Reset UI
+                hideError();
+                progressBarFill.style.width = '0%';
+                currentEmail.textContent = 'Processing: ';
+                totalCount.textContent = '0';
+                processedCount.textContent = '0';
+                validCount.textContent = '0';
+                invalidCount.textContent = '0';
+                statusElement.textContent = 'Status: Starting...';
+                progressContainer.style.display = 'block';
+                downloadSection.style.display = 'none';
+                
+                // Send the file
                 fetch('/upload', {
                     method: 'POST',
                     body: formData
                 })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.error) {
-                        alert(data.error);
-                    } else {
-                        progressContainer.style.display = 'block';
-                        checkProgress();
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(data => {
+                            throw new Error(data.error || 'Error uploading file');
+                        });
                     }
+                    return response.json();
+                })
+                .then(data => {
+                    // Start polling for progress
+                    startProgressPolling();
                 })
                 .catch(error => {
-                    console.error('Error:', error);
+                    showError(error.message);
+                    progressContainer.style.display = 'none';
                 });
             });
-
-            function checkProgress() {
+            
+            function startProgressPolling() {
+                if (progressInterval) {
+                    clearInterval(progressInterval);
+                }
+                
+                progressInterval = setInterval(updateProgress, 500);
+            }
+            
+            function updateProgress() {
                 fetch('/progress')
-                .then(response => response.json())
-                .then(data => {
-                    const { total, processed, valid, invalid, status, current_email } = data;
-                    const progressPercentage = total ? (processed / total) * 100 : 0;
-
-                    progressBarFill.style.width = `${progressPercentage}%`;
-                    progressText.textContent = `Processed: ${processed}/${total} (Valid: ${valid}, Invalid: ${invalid})`;
-                    currentEmail.textContent = `Current Email: ${current_email}`;
-
-                    if (status === 'processing') {
-                        setTimeout(checkProgress, 1000);
-                    } else if (status === 'completed') {
-                        alert('Processing completed!');
-                    } else if (status.startsWith('error')) {
-                        alert(`Error: ${status}`);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                });
+                    .then(response => response.json())
+                    .then(data => {
+                        totalCount.textContent = data.total;
+                        processedCount.textContent = data.processed;
+                        validCount.textContent = data.valid;
+                        invalidCount.textContent = data.invalid;
+                        currentEmail.textContent = 'Processing: ' + data.current_email;
+                        statusElement.textContent = 'Status: ' + data.status;
+                        
+                        // Update progress bar
+                        if (data.total > 0) {
+                            const percentage = (data.processed / data.total) * 100;
+                            progressBarFill.style.width = percentage + '%';
+                        }
+                        
+                        // If processing completed or errored
+                        if (data.status === 'completed' || data.status.startsWith('error')) {
+                            clearInterval(progressInterval);
+                            
+                            if (data.status === 'completed') {
+                                statusElement.textContent = 'Status: Processing completed';
+                                downloadSection.style.display = 'block';
+                            } else {
+                                showError('Error: ' + data.status);
+                            }
+                        }
+                    })
+                    .catch(error => {
+                        clearInterval(progressInterval);
+                        showError('Error fetching progress: ' + error.message);
+                    });
+            }
+            
+            function showError(message) {
+                errorMessage.textContent = message;
+                errorMessage.style.display = 'block';
+            }
+            
+            function hideError() {
+                errorMessage.textContent = '';
+                errorMessage.style.display = 'none';
             }
         });
     </script>
