@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Cleaner</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            flex-direction: column;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 2.5rem;
+        }
+
+        /* Form Styles */
+        #upload-form {
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        #file-input {
+            display: none;
+        }
+
+        .file-upload-label {
+            display: inline-block;
+            background: #4caf50;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .file-upload-label:hover {
+            background: #45a049;
+        }
+
+        button[type="submit"] {
+            background: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: background 0.3s ease;
+        }
+
+        button[type="submit"]:hover {
+            background: #0056b3;
+        }
+
+        /* Progress Container Styles */
+        #progress-container {
+            display: none;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        #progress-bar {
+            width: 100%;
+            background-color: #f3f3f3;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+
+        #progress-bar-fill {
+            height: 20px;
+            background-color: #4caf50;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        #progress-text {
+            font-size: 0.9rem;
+            color: #555;
+            margin: 10px 0;
+        }
+
+        #current-email {
+            font-size: 0.9rem;
+            color: #777;
+            font-style: italic;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            #upload-form {
+                padding: 20px;
+            }
+
+            .file-upload-label, button[type="submit"] {
+                padding: 8px 16px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Email Cleaner</h1>
+    <form id="upload-form" enctype="multipart/form-data">
+        <label for="file-input" class="file-upload-label">Choose CSV File</label>
+        <input type="file" name="file" id="file-input" accept=".csv">
+        <button type="submit">Upload</button>
+    </form>
+
+    <div id="progress-container">
+        <h2>Processing...</h2>
+        <div id="progress-bar">
+            <div id="progress-bar-fill"></div>
+        </div>
+        <p id="progress-text"></p>
+        <p id="current-email"></p>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const uploadForm = document.getElementById('upload-form');
+            const progressContainer = document.getElementById('progress-container');
+            const progressBarFill = document.getElementById('progress-bar-fill');
+            const progressText = document.getElementById('progress-text');
+            const currentEmail = document.getElementById('current-email');
+
+            uploadForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+                const fileInput = document.getElementById('file-input');
+                const file = fileInput.files[0];
+
+                if (!file) {
+                    alert('Please select a file.');
+                    return;
+                }
+
+                const formData = new FormData();
+                formData.append('file', file);
+
+                fetch('/upload', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        alert(data.error);
+                    } else {
+                        progressContainer.style.display = 'block';
+                        checkProgress();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            });
+
+            function checkProgress() {
+                fetch('/progress')
+                .then(response => response.json())
+                .then(data => {
+                    const { total, processed, valid, invalid, status, current_email } = data;
+                    const progressPercentage = total ? (processed / total) * 100 : 0;
+
+                    progressBarFill.style.width = `${progressPercentage}%`;
+                    progressText.textContent = `Processed: ${processed}/${total} (Valid: ${valid}, Invalid: ${invalid})`;
+                    currentEmail.textContent = `Current Email: ${current_email}`;
+
+                    if (status === 'processing') {
+                        setTimeout(checkProgress, 1000);
+                    } else if (status === 'completed') {
+                        alert('Processing completed!');
+                    } else if (status.startsWith('error')) {
+                        alert(`Error: ${status}`);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            }
+        });
+    </script>
+</body>
+</html>
