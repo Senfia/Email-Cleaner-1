@@ -67,7 +67,7 @@ Email Cleaner is a web application built with Flask that allows users to upload 
 1. Clone the repository:
 
     ```bash
-    git clone https://github.com/yourusername/email-cleaner.git
+    git clone https://github.com/Senfia/email-cleaner.git
     cd email-cleaner
     ```
 
