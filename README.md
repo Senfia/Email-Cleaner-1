@@ -55,6 +55,36 @@ Email Cleaner is a web application built with Flask that allows users to upload 
 
 5. Download the lists of valid and invalid email addresses.
 
+## Docker
+
+### Requirements
+
+- Docker
+- Docker Compose
+
+### Installation
+
+1. Clone the repository:
+
+    ```bash
+    git clone https://github.com/yourusername/email-cleaner.git
+    cd email-cleaner
+    ```
+
+2. Build and run the Docker containers:
+
+    ```bash
+    docker-compose up --build
+    ```
+
+3. Open your web browser and go to `http://127.0.0.1:5000`.
+
+4. Upload a CSV file containing email addresses.
+
+5. Monitor the progress of email validation.
+
+6. Download the lists of valid and invalid email addresses.
+
 ## Project Structure
 
 ```
