@@ -89,13 +89,12 @@ Email Cleaner is a web application built with Flask that allows users to upload 
 
 ```
 email-cleaner/
-├── static/
-├── output/
-├── uploads/
-├── templates/
-│   └── index.html
 ├── app.py
 ├── requirements.txt
+├── static/
+│   ├── uploads/
+│   └── output/
+└── templates/
 └── README.md
 ```
 
